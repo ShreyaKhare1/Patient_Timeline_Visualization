@@ -1,0 +1,76 @@
+import pandas as pd
+import dash
+from dash import Dash
+from dash import html
+from dash import dcc
+from dash.dash_table import DataTable
+import dash_bootstrap_components as dbc 
+import plotly.express as px 
+a=pd.read_csv(r"C:\Users\lenovo\Downloads\500_Patient_Sample (1).csv")
+
+    
+    
+inp=int(input("Enter Id"))
+d=a[a["Patient ID"]==inp].head()
+
+
+app=Dash()
+colors = {
+    
+    'text': '#7FDBFF'
+}
+def generate_table(dataframe, max_rows=10):
+    table_style = {
+        'borderCollapse': 'collapse',
+        'width': '100%',
+        'background':'#F3EC07'
+    }
+    th_style = {
+        'border': '1px solid #ddd',
+        'padding': '8px',
+        'background': '#f2f2f2',
+        'fontWeight': 'bold',
+    }
+    td_style = {
+        'border': '1px solid green',
+        'padding': '8px',
+        'textAlign': 'left',
+        'color':'#C71156'
+    }
+    return html.Table([
+        html.Thead(
+            html.Tr([html.Th(col,th_style)for col in dataframe.columns])
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(dataframe.iloc[i][col],style=td_style) for col in dataframe.columns
+            ]) for i in range(min(len(dataframe), max_rows))
+            
+        ]),
+        
+    ],
+    style=table_style)
+d=d.drop('SNo',axis=1)
+d=d.drop('Unnamed: 0',axis=1)
+app.layout = html.Div( children=[
+    html.H1(
+        children='Timeline',
+        style={
+            'textAlign': 'center',
+            
+        }
+    ),
+
+    
+    html.H4(children='Summary',
+    style={
+        'textAlign': 'center',
+        }),
+    generate_table(d) 
+    ])
+	
+
+
+
+b=app.run_server()
+print(b)
